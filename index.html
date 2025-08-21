@@ -3,117 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCP:RP Internal Affairs</title>
+  <title>SCP:RP Internal Affairs - Admin Request</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+      color: white;
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      font-family: 'Poppins', sans-serif;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(15px);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-      text-align: center;
-      width: 420px;
-      animation: fadeIn 1s ease-out;
+      background: rgba(30, 41, 59, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.6);
+      animation: fadeIn 1s ease;
     }
 
     h1 {
-      font-size: 28px;
-      color: #fff;
+      text-align: center;
       margin-bottom: 20px;
-      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
-      animation: glow 2s infinite alternate;
+      font-size: 1.8rem;
+      color: #38bdf8;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #1e293b;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      transition: 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      background: #334155;
     }
 
     textarea {
-      width: 100%;
-      height: 120px;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
       resize: none;
-      outline: none;
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      backdrop-filter: blur(8px);
-    }
-
-    textarea::placeholder {
-      color: #ccc;
+      height: 100px;
     }
 
     button {
-      margin-top: 20px;
       width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: bold;
+      padding: 12px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
       border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #00f2fe, #4facfe);
-      color: #fff;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
     }
 
     button:hover {
-      background: linear-gradient(135deg, #43e97b, #38f9d7);
-      transform: scale(1.05);
-      box-shadow: 0 8px 30px rgba(0, 255, 200, 0.7);
+      background: linear-gradient(135deg, #2563eb, #0891b2);
     }
+
+    .success, .error {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .success { color: #22c55e; }
+    .error { color: #ef4444; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px cyan, 0 0 20px cyan; }
-      to { text-shadow: 0 0 20px #00ffe5, 0 0 40px #00ffe5; }
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>SCP:RP Internal Affairs</h1>
+    <h1>🚨 Internal Affairs Request</h1>
     <form id="requestForm">
-      <textarea id="issue" placeholder="Describe the issue..."></textarea>
-      <button type="submit">🚨 Submit Request</button>
+      <label for="username">Your Roblox Username</label>
+      <input type="text" id="username" placeholder="Enter your username" required>
+
+      <label for="request">Request Details</label>
+      <textarea id="request" placeholder="Describe the issue..." required></textarea>
+
+      <button type="submit">Submit Request</button>
     </form>
+    <p class="success">✅ Request sent successfully!</p>
+    <p class="error">❌ Failed to send request. Try again later.</p>
   </div>
 
   <script>
-    document.getElementById("requestForm").addEventListener("submit", async function(e) {
+    const form = document.getElementById("requestForm");
+    const successMsg = document.querySelector(".success");
+    const errorMsg = document.querySelector(".error");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const issue = document.getElementById("issue").value;
 
-      if (!issue.trim()) {
-        alert("Please describe the issue before submitting!");
-        return;
-      }
+      const username = document.getElementById("username").value;
+      const request = document.getElementById("request").value;
 
-      // Replace with your actual Discord Webhook URL
       const webhookURL = "https://discord.com/api/webhooks/1407959625952923699/-POm2LYCfTiUmZ_JWipIG40ZFkn6YcMyCc0wGDWR6rmz4zk1ZLn_02ObBuwPcpAeP5zL";
 
-      await fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: `📢 **New Admin Request:**\n${issue}` })
-      });
+      const payload = {
+        username: "SCP:RP Request Bot",
+        embeds: [{
+          title: "📌 New Internal Affairs / Admin Request",
+          color: 5814783,
+          fields: [
+            { name: "Username", value: username, inline: true },
+            { name: "Request", value: request }
+          ],
+          footer: { text: "SCP:RP IA System" },
+          timestamp: new Date()
+        }]
+      };
 
-      alert("✅ Request sent to Internal Affairs.");
-      document.getElementById("requestForm").reset();
+      try {
+        const response = await fetch(webhookURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          successMsg.style.display = "block";
+          errorMsg.style.display = "none";
+          form.reset();
+        } else {
+          throw new Error("Request failed");
+        }
+      } catch (err) {
+        successMsg.style.display = "none";
+        errorMsg.style.display = "block";
+      }
     });
   </script>
 </body>
