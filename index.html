@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCP:RP Internal Affairs</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    header {
+      text-align: center;
+      padding: 4rem 1rem;
+      animation: fadeDown 1s ease forwards;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #ff004c, #ff7300);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p {
+      margin-top: .5rem;
+      color: #aaa;
+    }
+    section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .form-box {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: fadeUp 1.2s ease forwards;
+    }
+    .form-box h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+    .form-box input, .form-box textarea {
+      width: 100%;
+      padding: .8rem;
+      margin: .6rem 0;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      transition: all .3s ease;
+    }
+    .form-box input:focus, .form-box textarea:focus {
+      background: rgba(255,255,255,0.15);
+      transform: scale(1.02);
+    }
+    .form-box button {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(90deg, #ff004c, #ff7300);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .3s ease;
+    }
+    .form-box button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 15px rgba(255,115,0,0.7);
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: .9rem;
+      color: #666;
+    }
+    /* Animations */
+    @keyframes fadeDown {
+      from {opacity:0; transform: translateY(-30px);}
+      to {opacity:1; transform: translateY(0);}
+    }
+    @keyframes fadeUp {
+      from {opacity:0; transform: translateY(30px);}
+      to {opacity:1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SCP:RP Internal Affairs</h1>
+    <p>Submit an Internal Affairs request or admin assistance ticket</p>
+  </header>
+
+  <section>
+    <div class="form-box">
+      <h2>Request Form</h2>
+      <form id="iaForm">
+        <input type="text" id="username" placeholder="Your Roblox Username" required>
+        <input type="text" id="budget" placeholder="Budget (if any)" />
+        <textarea id="description" rows="5" placeholder="Describe your request/issue..." required></textarea>
+        <button type="submit">Submit Request</button>
+      </form>
+      <p id="responseMessage" style="text-align:center; margin-top:1rem;"></p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 SCP:RP Server Internal Affairs
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const form = document.getElementById("iaForm");
+    const responseMessage = document.getElementById("responseMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const budget = document.getElementById("budget").value || "N/A";
+      const description = document.getElementById("description").value;
+
+      const webhookURL = "YOUR_DISCORD_WEBHOOK_URL"; // replace with your webhook
+
+      const payload = {
+        content: `📢 **New IA Request Submitted**`,
+        embeds: [{
+          title: "Internal Affairs Request",
+          color: 16711680,
+          fields: [
+            { name: "Username", value: username, inline: true },
+            { name: "Budget", value: budget, inline: true },
+            { name: "Description", value: description }
+          ],
+          footer: { text: "SCP:RP Internal Affairs System" },
+          timestamp: new Date()
+        }]
+      };
+
+      try {
+        const res = await fetch(webhookURL, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          responseMessage.textContent = "✅ Request submitted successfully!";
+          responseMessage.style.color = "lightgreen";
+          form.reset();
+        } else {
+          responseMessage.textContent = "❌ Failed to submit request.";
+          responseMessage.style.color = "red";
+        }
+      } catch (err) {
+        responseMessage.textContent = "⚠️ Error sending request.";
+        responseMessage.style.color = "orange";
+      }
+    });
+  </script>
+</body>
+</html>
