@@ -3,134 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SCP:RP Internal Affairs Request</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <title>SCP:RP Internal Affairs</title>
   <style>
     body {
       margin: 0;
-      font-family: "Poppins", sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: white;
-      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
     }
 
-    header {
-      text-align: center;
-      padding: 2rem;
-    }
-
-    header h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
-    }
-
-    .form-container {
-      max-width: 600px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.1);
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      padding: 40px;
       border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(12px);
-      animation: fadeIn 1.5s ease;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      width: 420px;
+      animation: fadeIn 1s ease-out;
     }
 
-    .form-container h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
+    h1 {
+      font-size: 28px;
+      color: #fff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
+      animation: glow 2s infinite alternate;
     }
 
     textarea {
       width: 100%;
       height: 120px;
-      padding: 1rem;
+      padding: 15px;
       border: none;
       border-radius: 12px;
+      font-size: 16px;
       resize: none;
-      font-size: 1rem;
       outline: none;
-      margin-bottom: 1.2rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      backdrop-filter: blur(8px);
+    }
+
+    textarea::placeholder {
+      color: #ccc;
     }
 
     button {
+      margin-top: 20px;
       width: 100%;
-      padding: 1rem;
-      font-size: 1.2rem;
+      padding: 14px;
+      font-size: 16px;
       font-weight: bold;
       border: none;
       border-radius: 12px;
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      color: #fff;
       cursor: pointer;
-      background: rgba(0, 255, 255, 0.2);
-      color: white;
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
       transition: all 0.3s ease;
     }
 
     button:hover {
-      background: rgba(0, 255, 255, 0.4);
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
       transform: scale(1.05);
-      box-shadow: 0 0 15px cyan;
-    }
-
-    .success-message {
-      display: none;
-      text-align: center;
-      margin-top: 1rem;
-      color: lightgreen;
-      font-weight: bold;
+      box-shadow: 0 8px 30px rgba(0, 255, 200, 0.7);
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px cyan, 0 0 20px cyan; }
+      to { text-shadow: 0 0 20px #00ffe5, 0 0 40px #00ffe5; }
     }
   </style>
 </head>
 <body>
-  <header>
+  <div class="container">
     <h1>SCP:RP Internal Affairs</h1>
-  </header>
-
-  <div class="form-container">
-    <h2>Request an Admin</h2>
     <form id="requestForm">
-      <textarea id="description" placeholder="Describe the issue..." required></textarea>
-      <button type="submit">Submit Request</button>
+      <textarea id="issue" placeholder="Describe the issue..."></textarea>
+      <button type="submit">🚨 Submit Request</button>
     </form>
-    <div class="success-message" id="successMessage">
-      ✅ Request sent to Internal Affairs!
-    </div>
   </div>
 
   <script>
-    const form = document.getElementById("requestForm");
-    const successMessage = document.getElementById("successMessage");
-
-    form.addEventListener("submit", function(e) {
+    document.getElementById("requestForm").addEventListener("submit", async function(e) {
       e.preventDefault();
+      const issue = document.getElementById("issue").value;
 
-      const description = document.getElementById("description").value;
+      if (!issue.trim()) {
+        alert("Please describe the issue before submitting!");
+        return;
+      }
 
-      fetch("https://discord.com/api/webhooks/XXXXXXXXXXXX/XXXXXXXXXXXXXXXX", {
+      // Replace with your actual Discord Webhook URL
+      const webhookURL = "YOUR_DISCORD_WEBHOOK_URL";
+
+      await fetch(webhookURL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: `📢 **New Internal Affairs Request**\n\n📝 Description: ${description}`
-        })
-      }).then(res => {
-        if (res.ok) {
-          successMessage.style.display = "block";
-          form.reset();
-        } else {
-          alert("❌ Failed to send request.");
-        }
+        body: JSON.stringify({ content: `📢 **New Admin Request:**\n${issue}` })
       });
-    });
 
-    gsap.from("header h1", { duration: 1.5, y: -50, opacity: 0, ease: "bounce" });
-    gsap.from(".form-container", { duration: 1.5, opacity: 0, y: 50, delay: 0.5 });
+      alert("✅ Request sent to Internal Affairs.");
+      document.getElementById("requestForm").reset();
+    });
   </script>
 </body>
 </html>
